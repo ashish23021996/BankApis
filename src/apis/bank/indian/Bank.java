@@ -1,9 +1,5 @@
 package apis.bank.indian;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "bank")
 public class Bank {
 	private String name;
 	private int id;
@@ -21,7 +17,6 @@ public class Bank {
 		return name;
 	}
 
-	@XmlElement
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -30,7 +25,6 @@ public class Bank {
 		return id;
 	}
 
-	@XmlElement
 	public void setId(int id) {
 		this.id = id;
 	}

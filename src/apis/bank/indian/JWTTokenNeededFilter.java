@@ -1,9 +1,8 @@
 package apis.bank.indian;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.IOException;
+import java.security.Key;
+import java.util.Date;
 
 import javax.annotation.Priority;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,9 +15,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.DatatypeConverter;
 
-import java.io.IOException;
-import java.security.Key;
-import java.util.Date;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Provider
 @JWTTokenNeeded
