@@ -1,121 +1,127 @@
 package apis.bank.indian;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 public class BanksDao {
-public List<Bank> getAllBanks(String ifsc){
-	List<Bank> bankList = new ArrayList<Bank>();
-	
-	Connection c = null;
-	Statement stmt = null;
-	try {
-		Class.forName("org.postgresql.Driver");
-		c = DriverManager.getConnection("jdbc:postgresql://ec2-176-34-183-20.eu-west-1.compute.amazonaws.com:5432/d1pq68u3kuvpep?sslmode=require", "mahxsmfwyxwjbk", "128e48320cebbdb5f31d48e711a000036d482772fa712db425528279975f51db");
-		c.setAutoCommit(false);
-		System.out.println("Opened database successfully");
+	private BasicDataSource connectionPool;
 
-		stmt = c.createStatement();
-		System.out.println("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "');");
-		ResultSet rs = stmt.executeQuery("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "');");
-		while (rs.next()) {
+	public BanksDao() {
+		super();
 
-			String name = rs.getString("name");
-			int id = rs.getInt("id");
-			Bank bank = new Bank(name,id);
+		connectionPool = DatabaseConnection.getDataSource();
 
-			bankList.add(bank);
-
-		}
-		rs.close();
-		stmt.close();
-		c.close();
-	} catch (Exception e) {
-		System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		System.exit(0);
 	}
-	System.out.println("Operation done successfully");
 
-	return  bankList;
-}
+	public List<Bank> getAllBanks(String ifsc) {
+		List<Bank> bankList = new ArrayList<Bank>();
 
-public List<Bank> getAllBanks(String ifsc, String limit) {
+		Statement stmt = null;
+		try {
+			Connection c = connectionPool.getConnection();
 
-	List<Bank> bankList = new ArrayList<Bank>();
-	
-	Connection c = null;
-	Statement stmt = null;
-	try {
-		Class.forName("org.postgresql.Driver");
-		c = DriverManager.getConnection("jdbc:postgresql://ec2-176-34-183-20.eu-west-1.compute.amazonaws.com:5432/d1pq68u3kuvpep?sslmode=require", "mahxsmfwyxwjbk", "128e48320cebbdb5f31d48e711a000036d482772fa712db425528279975f51db");
-		c.setAutoCommit(false);
-		System.out.println("Opened database successfully");
+			stmt = c.createStatement();
+			System.out.println("The Connection Object is of Class: " + c.getClass());
+			System.out.println(
+					"select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "');");
+			ResultSet rs = stmt.executeQuery(
+					"select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "');");
+			while (rs.next()) {
 
-		stmt = c.createStatement();
-		System.out.println("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "') " + limit + ";");
-		ResultSet rs = stmt.executeQuery("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "')  " + limit + ";");
-		while (rs.next()) {
+				String name = rs.getString("name");
+				int id = rs.getInt("id");
+				Bank bank = new Bank(name, id);
 
-			String name = rs.getString("name");
-			int id = rs.getInt("id");
-			Bank bank = new Bank(name,id);
+				bankList.add(bank);
 
-			bankList.add(bank);
-
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
-		rs.close();
-		stmt.close();
-		c.close();
-	} catch (Exception e) {
-		System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		System.exit(0);
+		System.out.println("Operation done successfully");
+
+		return bankList;
 	}
-	System.out.println("Operation done successfully");
 
-	return  bankList;
+	public List<Bank> getAllBanks(String ifsc, String limit) {
 
-}
+		List<Bank> bankList = new ArrayList<Bank>();
 
-public List<Bank> getAllBanks(String ifsc, String limit, String offset) {
+		Statement stmt = null;
+		try {
+			Connection c = connectionPool.getConnection();
+			System.out.println("The Connection Object is of Class: " + c.getClass());
+			System.out.println("Opened database successfully");
 
+			stmt = c.createStatement();
+			System.out.println("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc
+					+ "') " + limit + ";");
+			ResultSet rs = stmt
+					.executeQuery("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc
+							+ "')  " + limit + ";");
+			while (rs.next()) {
 
-	List<Bank> bankList = new ArrayList<Bank>();
-	
-	Connection c = null;
-	Statement stmt = null;
-	try {
-		Class.forName("org.postgresql.Driver");
-		c = DriverManager.getConnection("jdbc:postgresql://ec2-176-34-183-20.eu-west-1.compute.amazonaws.com:5432/d1pq68u3kuvpep?sslmode=require", "mahxsmfwyxwjbk", "128e48320cebbdb5f31d48e711a000036d482772fa712db425528279975f51db");
-		c.setAutoCommit(false);
-		System.out.println("Opened database successfully");
+				String name = rs.getString("name");
+				int id = rs.getInt("id");
+				Bank bank = new Bank(name, id);
 
-		stmt = c.createStatement();
-		System.out.println("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "' ) " + limit + " " + offset + ";");
-		ResultSet rs = stmt.executeQuery("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc + "' )  " + limit + " " + offset + ";");
-		while (rs.next()) {
+				bankList.add(bank);
 
-			String name = rs.getString("name");
-			int id = rs.getInt("id");
-			Bank bank = new Bank(name,id);
-
-			bankList.add(bank);
-
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
 		}
-		rs.close();
-		stmt.close();
-		c.close();
-	} catch (Exception e) {
-		System.err.println(e.getClass().getName() + ": " + e.getMessage());
-		System.exit(0);
+		System.out.println("Operation done successfully");
+
+		return bankList;
+
 	}
-	System.out.println("Operation done successfully");
 
-	return  bankList;
+	public List<Bank> getAllBanks(String ifsc, String limit, String offset) {
 
+		List<Bank> bankList = new ArrayList<Bank>();
 
-}
+		Statement stmt = null;
+		try {
+			Connection c = connectionPool.getConnection();
+			System.out.println("The Connection Object is of Class: " + c.getClass());
+			System.out.println("Opened database successfully");
+
+			stmt = c.createStatement();
+			System.out.println("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc
+					+ "' ) " + limit + " " + offset + ";");
+			ResultSet rs = stmt
+					.executeQuery("select *  from banks where id = (select bank_id from branches where ifsc = '" + ifsc
+							+ "' )  " + limit + " " + offset + ";");
+			while (rs.next()) {
+
+				String name = rs.getString("name");
+				int id = rs.getInt("id");
+				Bank bank = new Bank(name, id);
+
+				bankList.add(bank);
+
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+		System.out.println("Operation done successfully");
+
+		return bankList;
+
+	}
 }
